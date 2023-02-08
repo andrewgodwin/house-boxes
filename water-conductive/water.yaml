@@ -1,0 +1,72 @@
+substitutions:
+  devicename: topup_sensor
+  friendly_name: Top-Up Tank Sensor
+
+esphome:
+  name: $devicename
+  platform: ESP32
+  board: pico32
+  platformio_options:
+    upload_speed: 115200
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+logger:
+
+api:
+
+ota:
+
+light:
+  - platform: neopixelbus
+    type: GRB
+    pin: GPIO27
+    num_leds: 25
+    name: "${friendly_name} LED"
+    id: led1
+
+esp32_touch:
+  setup_mode: True
+  iir_filter: 10ms
+
+binary_sensor:
+  - platform: esp32_touch
+    name: "${friendly_name} Water"
+    device_class: moisture
+    id: leak
+    pin: GPIO32
+    threshold: 30
+    on_press:
+      then:
+        - light.addressable_set:
+            id: led1
+            range_from: 0
+            range_to: 24
+            red: 0%
+            green: 0%
+            blue: 0%
+        - light.addressable_set:
+            id: led1
+            range_from: 12
+            range_to: 12
+            red: 0%
+            green: 0%
+            blue: 30%
+    on_release:
+      then:
+        - light.addressable_set:
+            id: led1
+            range_from: 0
+            range_to: 24
+            red: 0%
+            green: 0%
+            blue: 0%
+        - light.addressable_set:
+            id: led1
+            range_from: 12
+            range_to: 12
+            red: 0%
+            green: 30%
+            blue: 0%
