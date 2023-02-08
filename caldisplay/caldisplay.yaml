@@ -96,14 +96,6 @@ time:
   - platform: sntp
     id: esptime
 
-font:
-  - file: "Raleway-Medium.ttf"
-    id: raleway_96
-    size: 96
-  - file: "Raleway-Medium.ttf"
-    id: raleway_48
-    size: 48
-
 http_request:
   useragent: esphome/device
   timeout: 10s
@@ -143,4 +135,4 @@ display:
     lambda: |-
       it.fill(COLOR_ON);
 
-      show_url_bitmap(&it, "https://aeracode.org/static/uploads/test.img", 10, 10, 100, 100);
+      show_url_bitmap(&it, "https://aeracode.org/static/uploads/testgrey.img", 50, 50, 1100, 725);

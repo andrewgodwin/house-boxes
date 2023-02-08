@@ -43,15 +43,18 @@ void show_url_bitmap(DisplayBuffer *display, char *url, int left, int top, int w
             // Write them to the display
             for (int i = 0; i < c; i++)
             {
-                uint8_t value = buff[i];
+                uint8_t byte1 = (buff[i] >> 4) * 16;
+                uint8_t byte2 = (buff[i] & 15) * 16;
                 int x = offset % width;
                 int y = offset / width;
-                display->draw_pixel_at(left + x, top + y, Color(value, value, value, value));
+                display->draw_pixel_at(left + x, top + y, Color(byte1, byte1, byte1, byte1));
+                offset++;
+                display->draw_pixel_at(left + x + 1, top + y, Color(byte2, byte2, byte2, byte2));
                 offset++;
             }
         }
         delay(1);
     }
-    ESP_LOGD("url_bitmap", "Downloaded %d bytes", offset);
+    ESP_LOGD("url_bitmap", "Downloaded %d pixels", offset);
     http.end();
 }
