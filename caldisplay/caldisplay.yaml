@@ -111,7 +111,7 @@ display:
     id: inkplate_display
     greyscale: true
     partial_updating: false
-    update_interval: 60s
+    update_interval: 300s
 
     ckv_pin: 32
     sph_pin: 33
@@ -139,4 +139,4 @@ display:
 
     lambda: |-
       it.fill(COLOR_ON);
-      show_url_bitmap(&it, "${image_url}", 50, 50, 1100, 725);
+      show_url_bitmap(&it, "${image_url}", 25, 25, 1150, 800);

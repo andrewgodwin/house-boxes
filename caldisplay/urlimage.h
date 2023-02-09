@@ -7,7 +7,11 @@ using display::DisplayBuffer;
 void show_url_bitmap(DisplayBuffer *display, char *url, int left, int top, int width, int height)
 {
     HTTPClient http;
+    http.setTimeout(30000);
+    http.setConnectTimeout(30000);
+    http.setReuse(false);
 
+    ESP_LOGD("url_bitmap", "Creating client for %s", url);
     int begin_status = http.begin(url);
     if (!begin_status)
     {
@@ -15,10 +19,11 @@ void show_url_bitmap(DisplayBuffer *display, char *url, int left, int top, int w
         return;
     }
 
+    ESP_LOGD("url_bitmap", "Beginning download");
     int http_code = http.GET();
+    ESP_LOGD("url_bitmap", "Got response");
     if (http_code != HTTP_CODE_OK)
     {
-        App.feed_wdt();
         ESP_LOGE("url_bitmap", "Could not download image from %s. Error code: %i", url, http_code);
         http.end();
         return;
@@ -26,11 +31,12 @@ void show_url_bitmap(DisplayBuffer *display, char *url, int left, int top, int w
 
     // Prepare the stream for reading
     WiFiClient *stream = http.getStreamPtr();
-    uint8_t buff[1024] = {0};
+    ESP_LOGD("url_bitmap", "Reading stream");
+    uint8_t buff[256] = {0};
     int offset = 0;
-    int total_bytes = height * width;
-    ESP_LOGD("url_bitmap", "Downloading image from %s, expecting %d bytes", url, total_bytes);
-    while (http.connected() && offset < total_bytes)
+    int total_pixels = (height * width);
+    ESP_LOGD("url_bitmap", "Downloading image from %s, expecting %d pixels", url, total_pixels);
+    while (http.connected() && offset < total_pixels)
     {
         // get available data size
         size_t size = stream->available();
