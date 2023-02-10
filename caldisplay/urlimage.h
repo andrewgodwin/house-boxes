@@ -35,6 +35,7 @@ void show_url_bitmap(DisplayBuffer *display, char *url, int left, int top, int w
     uint8_t buff[256] = {0};
     int offset = 0;
     int total_pixels = (height * width);
+    bool blanked = false;
     ESP_LOGD("url_bitmap", "Downloading image from %s, expecting %d pixels", url, total_pixels);
     while (http.connected() && offset < total_pixels)
     {
@@ -49,6 +50,11 @@ void show_url_bitmap(DisplayBuffer *display, char *url, int left, int top, int w
             // Write them to the display
             for (int i = 0; i < c; i++)
             {
+                if (!blanked)
+                {
+                    blanked = true;
+                    display->fill(COLOR_ON);
+                }
                 uint8_t byte1 = (buff[i] >> 4) * 16;
                 uint8_t byte2 = (buff[i] & 15) * 16;
                 int x = offset % width;
